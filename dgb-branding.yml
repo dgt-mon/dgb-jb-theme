@@ -1,0 +1,34 @@
+# Shared De Gruyter Brill branding.
+#
+# Extend this from a book's myst.yml so DGB-wide branding isn't re-declared per
+# manuscript:
+#
+#   extends:
+#     - https://raw.githubusercontent.com/dgt-mon/dgb-jb-theme/main/dgb-branding.yml
+#
+# (During local development you can point `extends` at a relative path to this
+# file instead of the URL.)
+#
+# Scope — only things IDENTICAL across every DGB book belong here. Per the MyST
+# merge rules (https://mystmd.org/guide/configuration): list fields are
+# combined, and non-list fields CANNOT be overridden by the extending book — so
+# a book that extends this must NOT also declare `site.parts.footer`.
+#
+# NOT included here:
+#   - favicon  -> shipped as a theme default (themes/book/public/favicon.svg),
+#                 so no per-book config is needed.
+#   - logo     -> references a local file path, which does not resolve across
+#                 books via `extends`; set per-book (site.options.logo) or host
+#                 the logo at a stable URL. See the note in the PR/README.
+version: 1
+site:
+  parts:
+    footer: |
+      <div class="dgb-site-footer-inner">
+        <span class="dgb-site-footer-copy">© 2026 De Gruyter Brill</span>
+        <nav class="dgb-site-footer-links" aria-label="Legal">
+          <a href="https://www.degruyterbrill.com/publishing/our-privacy-policy">Privacy Policy</a>
+          <a href="https://www.degruyterbrill.com/publishing/accessibility">Accessibility</a>
+          <a href="https://www.degruyterbrill.com/publishing/legal-notice">Legal Notice</a>
+        </nav>
+      </div>
