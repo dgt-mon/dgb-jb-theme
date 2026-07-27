@@ -123,6 +123,32 @@ article {
   display: none !important;
 }
 
+/* Header nav links + dropdown labels: light text on the Berlin-blue bar.
+ * Without this the global dark→#002850 recolor makes them blue-on-blue
+ * (invisible). Scoped to the header nav items and the dropdown trigger only —
+ * NOT the dropdown popup items (white menu) and NOT the search pill.
+ *
+ * `.myst-home-link span` is the site title (`site.options.logo_text`, or the
+ * fallback shown when no logo is set). It only renders when a book omits the
+ * logo or sets logo_text — otherwise the theme marks it `sr-only`, which is why
+ * a logo-bearing site never surfaces the blue-on-blue bug. */
+.myst-top-nav-item a,
+.myst-top-nav-dropdown button,
+.myst-top-nav-dropdown button span,
+.myst-home-link,
+.myst-home-link span {
+  color: #FAFAF5 !important;
+}
+
+.myst-top-nav-item a:hover,
+.myst-top-nav-item a:focus-visible,
+.myst-top-nav-dropdown button:hover,
+.myst-home-link:hover span,
+.myst-home-link:focus-visible span {
+  color: #FFFFFF !important;
+  text-decoration: underline;
+}
+
 /* Headings — Berlin blue. !important overrides Tailwind prose's
  * `.prose :where(h1…)` rule (zero-specificity :where, but the .prose ancestor
  * still beats a bare `h1` selector). */
