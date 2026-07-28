@@ -87,72 +87,117 @@
 body {
   /* !important beats the theme's `bg-white` utility on <body> — otherwise the
    * page background is white and shows as a gap above the footer. */
-  background-color: #FAFAF5 !important;
+  background-color: #fafaf5 !important;
   text-underline-offset: 0.15em;
   color: #002850;
 }
 
 main,
 article {
-  background-color: #FAFAF5;
+  background-color: #fafaf5;
 }
 
-/* Minimal DGB header: Berlin-blue bar showing only the (light-blue) DGB logo,
- * linked to degruyterbrill.com. Theme-toggle hidden; search kept. */
-.myst-top-nav {
-  position: static !important;
-  background-color: #002850 !important;
-  border-bottom: 0 !important;
-  box-shadow: none !important;
-}
-
-/* Logo sizing — the wordmark is 290×40; let it sit comfortably in the 60px bar. */
-.myst-top-nav .myst-home-link img {
-  height: 28px;
-  width: auto;
-}
-
-/* Mobile menu toggle stays for nav access, but recoloured for the dark bar. */
-.myst-top-nav .myst-top-nav-menu-button {
-  color: #FAFAF5 !important;
+/* ─── DGB header — app/components/DgbHeader.tsx ─────────────────────────────
+ * The header is a component now, not a skin over the stock `<TopNav/>`: every
+ * book gets the Berlin-blue brand bar with no `myst.yml` config (no `logo`, no
+ * `logo_text`). Layout lives in the component (Tailwind); colour and type live
+ * here, with the rest of the identity.
+ *
+ * `!important` appears only where a rule has to beat the global "recolor dark
+ * theme text to Berlin blue" block further down — on the dark bar that block
+ * would otherwise render text blue-on-blue.
+ * ─────────────────────────────────────────────────────────────────────────── */
+.dgb-header {
+  background-color: #002850;
+  border-bottom: 0;
+  box-shadow: none;
   font-family: Haffer, Arial, sans-serif;
 }
 
-/* Hide the theme-toggle, but keep the search bar. */
-.myst-top-nav .myst-theme-button {
-  display: none !important;
+/* The DGB lockup (public/dgb-logo.png) — periwinkle on the Berlin-blue bar. */
+.dgb-header-logo {
+  display: block;
 }
 
-/* Header nav links + dropdown labels: light text on the Berlin-blue bar.
- * Without this the global dark→#002850 recolor makes them blue-on-blue
- * (invisible). Scoped to the header nav items and the dropdown trigger only —
- * NOT the dropdown popup items (white menu) and NOT the search pill.
- *
- * `.myst-home-link span` is the site title (`site.options.logo_text`, or the
- * fallback shown when no logo is set). It only renders when a book omits the
- * logo or sets logo_text — otherwise the theme marks it `sr-only`, which is why
- * a logo-bearing site never surfaces the blue-on-blue bug. */
-.myst-top-nav-item a,
-.myst-top-nav-dropdown button,
-.myst-top-nav-dropdown button span,
-.myst-home-link,
-.myst-home-link span {
-  color: #FAFAF5 !important;
+.dgb-header-brand:focus-visible {
+  outline: 2px solid #b4b9ff;
+  outline-offset: 4px;
 }
 
-.myst-top-nav-item a:hover,
-.myst-top-nav-item a:focus-visible,
-.myst-top-nav-dropdown button:hover,
-.myst-home-link:hover span,
-.myst-home-link:focus-visible span {
-  color: #FFFFFF !important;
+/* DGB-wide nav links: periwinkle, as on degruyterbrill.com. The book title next
+ * to the logo is sand instead, so the book reads as the page's own identity. */
+.dgb-header-nav-link {
+  color: #b4b9ff !important;
+  font-family: Haffer, Arial, sans-serif;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.dgb-header-nav-link:hover,
+.dgb-header-nav-link:focus-visible {
+  color: #ffffff !important;
   text-decoration: underline;
+}
+
+/* Sidebar toggle — kept for nav access, recoloured for the dark bar. */
+.dgb-header-menu-button {
+  color: #fafaf5 !important;
+}
+
+.dgb-header-menu-button:hover,
+.dgb-header-menu-button:focus-visible {
+  color: #ffffff !important;
+}
+
+/* Keep the bar to a single 60px row: the sidebar and the document outline are
+ * offset by that height, so a nav item wrapping to a second line would push the
+ * bar taller and leave both misaligned. */
+.dgb-header .myst-top-nav-item,
+.dgb-header .myst-top-nav-dropdown,
+.dgb-header .myst-navbar-end {
+  white-space: nowrap;
+}
+
+/* The book's own nav links + dropdown triggers: same periwinkle as the DGB
+ * links they sit next to. Scoped to the header, so the dropdown popup (a white
+ * menu) keeps the theme's dark text. */
+.dgb-header .myst-top-nav-item a,
+.dgb-header .myst-top-nav-dropdown button,
+.dgb-header .myst-top-nav-dropdown button span {
+  color: #b4b9ff !important;
+  font-family: Haffer, Arial, sans-serif;
+}
+
+.dgb-header .myst-top-nav-item a:hover,
+.dgb-header .myst-top-nav-item a:focus-visible,
+.dgb-header .myst-top-nav-dropdown button:hover {
+  color: #ffffff !important;
+  text-decoration: underline;
+}
+
+/* Page actions (site.actions) — sand outline pill, inverted on hover. */
+.dgb-header-action {
+  border: 1px solid #fafaf5;
+  border-radius: 9999px;
+  color: #fafaf5 !important;
+  font-family: Haffer, Arial, sans-serif;
+}
+
+.dgb-header-action:hover,
+.dgb-header-action:focus-visible {
+  background-color: #fafaf5;
+  color: #002850 !important;
 }
 
 /* Headings — Berlin blue. !important overrides Tailwind prose's
  * `.prose :where(h1…)` rule (zero-specificity :where, but the .prose ancestor
  * still beats a bare `h1` selector). */
-h1, h2, h3, h4, h5, h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
 .myst-fm-block-title {
   color: #002850 !important;
 }
@@ -166,14 +211,35 @@ h1, h2, h3, h4, h5, h6,
  * !important is required because the theme sizes headings via
  * `.prose :where(hN)` (higher specificity, but non-!important).
  * ─────────────────────────────────────────────────────────────────────────── */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: Haffer, Arial, sans-serif !important;
 }
 
-h2 { font-size: 32px !important; line-height: 1.2 !important;  font-weight: 600 !important; }
-h3 { font-size: 27px !important; line-height: 1.25 !important; font-weight: 600 !important; }
-h4 { font-size: 24px !important; line-height: 1.3 !important;  font-weight: 600 !important; }
-h5 { font-size: 22px !important; line-height: 1.35 !important; font-weight: 600 !important; }
+h2 {
+  font-size: 32px !important;
+  line-height: 1.2 !important;
+  font-weight: 600 !important;
+}
+h3 {
+  font-size: 27px !important;
+  line-height: 1.25 !important;
+  font-weight: 600 !important;
+}
+h4 {
+  font-size: 24px !important;
+  line-height: 1.3 !important;
+  font-weight: 600 !important;
+}
+h5 {
+  font-size: 22px !important;
+  line-height: 1.35 !important;
+  font-weight: 600 !important;
+}
 h6 {
   font-size: 20px !important;
   line-height: 1.4 !important;
@@ -193,11 +259,22 @@ span {
  * Blue link utilities (text-blue-*) and light muted grays (≤500) are left as-is.
  * ─────────────────────────────────────────────────────────────────────────── */
 .text-black,
-.text-gray-600, .text-gray-700, .text-gray-800, .text-gray-900,
-.text-neutral-700, .text-neutral-800, .text-neutral-900,
-.text-stone-700, .text-stone-800, .text-stone-900,
-.text-slate-700, .text-slate-800, .text-slate-900,
-.text-zinc-700, .text-zinc-800, .text-zinc-900 {
+.text-gray-600,
+.text-gray-700,
+.text-gray-800,
+.text-gray-900,
+.text-neutral-700,
+.text-neutral-800,
+.text-neutral-900,
+.text-stone-700,
+.text-stone-800,
+.text-stone-900,
+.text-slate-700,
+.text-slate-800,
+.text-slate-900,
+.text-zinc-700,
+.text-zinc-800,
+.text-zinc-900 {
   color: #002850 !important;
 }
 
@@ -218,14 +295,14 @@ p {
  * ─────────────────────────────────────────────────────────────────────────── */
 .myst-footer-links {
   justify-content: space-between !important;
-  flex-wrap: nowrap !important;   /* keep prev + next side by side, never stacked */
+  flex-wrap: nowrap !important; /* keep prev + next side by side, never stacked */
   gap: 20px;
 }
 
 .myst-footer-link {
-  flex: 1 1 0 !important;          /* share the row equally */
-  min-width: 0;                    /* allow shrinking so they stay on one row */
-  background-color: #E5F0FF;
+  flex: 1 1 0 !important; /* share the row equally */
+  min-width: 0; /* allow shrinking so they stay on one row */
+  background-color: #e5f0ff;
   border: 0 !important;
   border-radius: 12px !important;
   box-shadow: none !important;
@@ -234,7 +311,7 @@ p {
 
 .myst-footer-link:hover,
 .myst-footer-link:focus-visible {
-  background-color: #D1E3FF;
+  background-color: #d1e3ff;
   color: #002850;
   border: 0 !important;
   box-shadow: none !important;
@@ -265,7 +342,7 @@ p {
  * ─────────────────────────────────────────────────────────────────────────── */
 .myst-outline {
   color: #002850;
-  background-color: #FAFAF5 !important;
+  background-color: #fafaf5 !important;
   font-family: Haffer, Arial, sans-serif;
 }
 
@@ -288,26 +365,26 @@ p {
 }
 
 .myst-outline-item {
-  border-left-color: #E1DCCD !important;
+  border-left-color: #e1dccd !important;
 }
 
 .myst-outline-item a {
   display: block;
   padding: 6px 8px 6px 12px;
-  color: #0059DE !important;
+  color: #0059de !important;
   text-decoration: none;
 }
 
 .myst-outline-item:hover,
 .myst-outline-item:focus-within,
 .myst-outline-item.myst-outline-item-active {
-  border-left-color: #0059DE !important;
+  border-left-color: #0059de !important;
 }
 
 /* ─── Search bar — cobalt-subtle pill ─────────────────────────────────────── */
 .myst-search-bar {
   min-width: 64px;
-  background-color: #D1E3FF !important;
+  background-color: #d1e3ff !important;
   border-color: transparent !important;
   border-radius: 12px !important;
   color: #002850 !important;
@@ -317,7 +394,7 @@ p {
 
 .myst-search-bar:hover,
 .myst-search-bar:focus-visible {
-  background-color: #C4D9F7 !important;
+  background-color: #c4d9f7 !important;
   border-color: transparent !important;
   color: #002850 !important;
   outline: 2px solid #002850;
@@ -337,10 +414,37 @@ p {
   box-shadow: none !important;
 }
 
-/* Search bar in the (dark) header uses a body-coloured pill for contrast. */
-.myst-top-nav .myst-search-bar {
-  background-color: #FAFAF5 !important;
+/* Search bar in the header: Berlin-blue fill with a periwinkle outline and
+ * periwinkle text/icon, so it reads as part of the bar instead of a light pill
+ * punched into it. Overrides the cobalt-subtle rules above (hence !important). */
+.dgb-header .myst-search-bar {
+  background-color: #002850 !important;
+  border: 1px solid #b4b9ff !important;
   border-radius: 9999px !important;
+  color: #b4b9ff !important;
+  box-shadow: none !important;
+}
+
+.dgb-header .myst-search-bar svg,
+.dgb-header .myst-search-bar .myst-search-text-placeholder {
+  color: #b4b9ff !important;
+}
+
+/* Hover/focus brightens to white — the cobalt-subtle rule's navy outline would
+ * be invisible on the navy bar. */
+.dgb-header .myst-search-bar:hover,
+.dgb-header .myst-search-bar:focus-visible {
+  background-color: #002850 !important;
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+  outline: none !important;
+}
+
+.dgb-header .myst-search-bar:hover svg,
+.dgb-header .myst-search-bar:hover .myst-search-text-placeholder,
+.dgb-header .myst-search-bar:focus-visible svg,
+.dgb-header .myst-search-bar:focus-visible .myst-search-text-placeholder {
+  color: #ffffff !important;
 }
 
 /* Hide the ⌘K keyboard-shortcut hint on the right of the search bar. */
@@ -435,7 +539,7 @@ main article:has(> .dgb-product-essentials) .myst-fm-downloads-dropdown {
 
 .dgb-quicklinks,
 .dgb-metrics-box {
-  background-color: #D1E3FF;
+  background-color: #d1e3ff;
   border-radius: 12px;
   overflow: hidden;
 }
@@ -577,20 +681,20 @@ main article:has(> .dgb-product-essentials) .myst-fm-downloads-dropdown {
 /* Kind icon in the title — the box's base colour at full opacity. */
 .myst-admonition.myst-admonition-important .myst-admonition-header-icon,
 .myst-admonition.myst-admonition-note .myst-admonition-header-icon {
-  color: #D1E3FF !important;
+  color: #d1e3ff !important;
 }
 
 .myst-admonition.myst-admonition-tip .myst-admonition-header-icon,
 .myst-admonition.myst-admonition-hint .myst-admonition-header-icon,
 .myst-admonition.myst-admonition-seealso .myst-admonition-header-icon {
-  color: #43B8B0 !important;
+  color: #43b8b0 !important;
 }
 
 .myst-admonition.myst-admonition-warning .myst-admonition-header-icon,
 .myst-admonition.myst-admonition-caution .myst-admonition-header-icon,
 .myst-admonition.myst-admonition-attention .myst-admonition-header-icon,
 .myst-admonition.myst-admonition-danger .myst-admonition-header-icon {
-  color: #FFB900 !important;
+  color: #ffb900 !important;
 }
 
 /* Title: Berlin-blue, Haffer, bold. */
@@ -605,33 +709,41 @@ main article:has(> .dgb-product-essentials) .myst-fm-downloads-dropdown {
 /* Fill colours by kind. */
 .myst-admonition.myst-admonition-important,
 .myst-admonition.myst-admonition-note {
-  background-color: rgba(209, 227, 255, 0.5) !important;   /* #D1E3FF 50% */
+  background-color: rgba(209, 227, 255, 0.5) !important; /* #D1E3FF 50% */
 }
 
 .myst-admonition.myst-admonition-tip,
 .myst-admonition.myst-admonition-hint,
 .myst-admonition.myst-admonition-seealso {
-  background-color: rgba(67, 184, 176, 0.15) !important;   /* #43B8B0 15% */
+  background-color: rgba(67, 184, 176, 0.15) !important; /* #43B8B0 15% */
 }
 
 .myst-admonition.myst-admonition-warning,
 .myst-admonition.myst-admonition-caution,
 .myst-admonition.myst-admonition-attention,
 .myst-admonition.myst-admonition-danger {
-  background-color: rgba(255, 185, 0, 0.15) !important;    /* #FFB900 15% */
+  background-color: rgba(255, 185, 0, 0.15) !important; /* #FFB900 15% */
 }
 
-/* ─── Minimal DGB site footer (site.parts.footer) ──────────────────────────
- * Berlin-blue full-width bar: copyright + a few legal links.
- * The theme wraps the part in <footer class="article footer article-grid …">
- * with a white bg + shadow + grid; reset that to a clean full-width bar.
+/* ─── DGB site footer — app/components/DgbSiteFooter.tsx ────────────────────
+ * Berlin-blue full-width bar: copyright + legal links, on every book with no
+ * `myst.yml` config. A book that defines `site.parts.footer` gets that content
+ * in the sand band above (`.dgb-book-footer`), where it stays readable, instead
+ * of it replacing the DGB bar.
  * ─────────────────────────────────────────────────────────────────────────── */
-footer.article.footer {
-  display: block !important;
-  margin-top: 0 !important;
-  padding: 0 !important;
-  background-color: #002850 !important;
-  box-shadow: none !important;
+.dgb-footer {
+  width: 100%;
+}
+
+.dgb-book-footer {
+  background-color: #f5f4ef;
+  border-top: 1px solid #e1dccd;
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+.dgb-site-footer {
+  background-color: #002850;
 }
 
 .dgb-site-footer-inner {
@@ -644,7 +756,7 @@ footer.article.footer {
   margin: 0 auto;
   box-sizing: border-box;
   padding: 24px 32px;
-  color: #B4B9FF;
+  color: #b4b9ff;
   font-family: Haffer, Arial, sans-serif;
   font-size: 14px;
   line-height: 20px;
@@ -653,32 +765,32 @@ footer.article.footer {
 .dgb-site-footer-inner span,
 .dgb-site-footer-inner p {
   margin: 0;
-  color: #B4B9FF;
+  color: #b4b9ff;
   font-family: Haffer, Arial, sans-serif;
   font-size: 14px;
   line-height: 20px;
 }
 
-.dgb-site-footer-inner p {
+.dgb-site-footer-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 24px;
+  gap: 12px 24px;
 }
 
 .dgb-site-footer-inner a {
-  color: #B4B9FF !important;
+  color: #b4b9ff !important;
   text-decoration: none;
 }
 
 .dgb-site-footer-inner a:hover,
 .dgb-site-footer-inner a:focus-visible {
-  color: #B4B9FF !important;
+  color: #b4b9ff !important;
   text-decoration: underline;
 }
 
 /* Footer link icons share the periwinkle (currentColor). */
 .dgb-site-footer-inner a svg {
-  color: #B4B9FF !important;
+  color: #b4b9ff !important;
 }
 
 /* ─── Chapter navigation (TOC) items — DGB hover + separators ──────────────
@@ -691,12 +803,12 @@ footer.article.footer {
   margin-top: 0 !important;
   margin-bottom: 0 !important;
   border-radius: 0 !important;
-  border-bottom: 1px solid #E1DCCD;
+  border-bottom: 1px solid #e1dccd;
 }
 
 .myst-toc-item:hover,
 .myst-toc-item.myst-toc-item-exact {
-  background-color: #F5F4EF !important;   /* sand-subtle */
+  background-color: #f5f4ef !important; /* sand-subtle */
   outline: none !important;
   box-shadow: none !important;
 }
@@ -716,19 +828,19 @@ footer.article.footer {
 
 .myst-fm-downloads-item:hover,
 .myst-fm-downloads-item:focus-visible {
-  background-color: #0059DE !important;   /* cobalt */
-  color: #FFFFFF !important;
-  border-color: #0059DE !important;
+  background-color: #0059de !important; /* cobalt */
+  color: #ffffff !important;
+  border-color: #0059de !important;
 }
 
 /* ─── Content links — cobalt (#0059DE) ────────────────────────────────────── */
 main article a.link {
-  color: #0059DE !important;
+  color: #0059de !important;
 }
 
 /* ─── Interactive embeds (graphs) — cobalt-subtle frame ───────────────────── */
 main article div.leading-\[0\] {
-  background-color: #D1E3FF;
+  background-color: #d1e3ff;
   padding: 16px;
   border-radius: 12px;
 }

@@ -1,34 +1,27 @@
-# Shared De Gruyter Brill branding.
+# Shared De Gruyter Brill branding — now a no-op.
 #
-# Extend this from a book's myst.yml so DGB-wide branding isn't re-declared per
-# manuscript:
+# NOTHING IS NEEDED HERE ANY MORE: DGB branding ships as theme defaults.
+#
+# This file used to carry `site.parts.footer` for books to pull in with:
 #
 #   extends:
 #     - https://raw.githubusercontent.com/dgt-mon/dgb-jb-theme/main/dgb-branding.yml
 #
-# (During local development you can point `extends` at a relative path to this
-# file instead of the URL.)
+# That did not work on the books it pointed at:
+#   - `extends` makes branding opt-in — a book that omits it gets the stock look.
+#   - Under the MyST merge rules (https://mystmd.org/guide/configuration) a
+#     non-list field from an extended config CANNOT be overridden, so a book
+#     could not have both this footer and one of its own.
+#   - `logo` resolves against the book's own directory, so a shared logo path
+#     could not resolve across books at all.
 #
-# Scope — only things IDENTICAL across every DGB book belong here. Per the MyST
-# merge rules (https://mystmd.org/guide/configuration): list fields are
-# combined, and non-list fields CANNOT be overridden by the extending book — so
-# a book that extends this must NOT also declare `site.parts.footer`.
+# The header and footer are React components in the book theme instead:
+#   themes/book/app/components/DgbHeader.tsx
+#   themes/book/app/components/DgbSiteFooter.tsx
+# Every book gets the Berlin-blue brand bar and the legal footer with no config;
+# a book that sets `site.parts.footer` gets that content in a band above the
+# legal bar rather than in place of it.
 #
-# NOT included here:
-#   - favicon  -> shipped as a theme default (themes/book/public/favicon.svg),
-#                 so no per-book config is needed.
-#   - logo     -> references a local file path, which does not resolve across
-#                 books via `extends`; set per-book (site.options.logo) or host
-#                 the logo at a stable URL. See the note in the PR/README.
+# Kept as a no-op so books that already `extends` this URL keep building — and
+# so they do not end up with two footers. Delete once nothing references it.
 version: 1
-site:
-  parts:
-    footer: |
-      <div class="dgb-site-footer-inner">
-        <span class="dgb-site-footer-copy">© 2026 De Gruyter Brill</span>
-        <nav class="dgb-site-footer-links" aria-label="Legal">
-          <a href="https://www.degruyterbrill.com/publishing/our-privacy-policy">Privacy Policy</a>
-          <a href="https://www.degruyterbrill.com/publishing/accessibility">Accessibility</a>
-          <a href="https://www.degruyterbrill.com/publishing/legal-notice">Legal Notice</a>
-        </nav>
-      </div>
