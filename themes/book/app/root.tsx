@@ -3,6 +3,7 @@ import tailwind from '~/styles/app.css';
 import thebeCoreCss from 'thebe-core/dist/lib/thebe-core.css';
 import { getConfig } from '~/utils/loaders.server';
 import type { SiteLoader } from '@myst-theme/common';
+import { Theme } from '@myst-theme/common';
 import {
   Document,
   responseNoSite,
@@ -141,7 +142,7 @@ export default function AppWithReload() {
   return (
     <SearchFactoryProvider factory={searchFactory}>
       <Document
-        theme={theme}
+        theme={Theme.light}
         config={config}
         scripts={MODE === 'static' ? undefined : <ContentReload port={CONTENT_CDN_PORT} />}
         staticBuild={MODE === 'static'}
@@ -149,7 +150,7 @@ export default function AppWithReload() {
         renderers={RENDERERS}
         head={
           <>
-            <link rel="icon" href={`${BASE_URL || ''}/favicon.ico`} />
+            <link rel="icon" type="image/svg+xml" href={`${BASE_URL || ''}/favicon.svg`} />
             <link rel="stylesheet" href={`${BASE_URL || ''}/myst-theme.css`} />
           </>
         }

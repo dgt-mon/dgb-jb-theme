@@ -1,4 +1,5 @@
 export { ThemeButton } from './ThemeButton.js';
+export { Search } from './Search.js';
 export { TopNav, NavItems, NavItem, DEFAULT_NAV_HEIGHT } from './TopNav.js';
 export { Navigation, PrimaryNavigation, ConfigurablePrimaryNavigation } from './Navigation.js';
 export { PrimarySidebar, useSidebarHeight } from './PrimarySidebar.js';

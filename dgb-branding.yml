@@ -1,0 +1,27 @@
+# Shared De Gruyter Brill branding — now a no-op.
+#
+# NOTHING IS NEEDED HERE ANY MORE: DGB branding ships as theme defaults.
+#
+# This file used to carry `site.parts.footer` for books to pull in with:
+#
+#   extends:
+#     - https://raw.githubusercontent.com/dgt-mon/dgb-jb-theme/main/dgb-branding.yml
+#
+# That did not work on the books it pointed at:
+#   - `extends` makes branding opt-in — a book that omits it gets the stock look.
+#   - Under the MyST merge rules (https://mystmd.org/guide/configuration) a
+#     non-list field from an extended config CANNOT be overridden, so a book
+#     could not have both this footer and one of its own.
+#   - `logo` resolves against the book's own directory, so a shared logo path
+#     could not resolve across books at all.
+#
+# The header and footer are React components in the book theme instead:
+#   themes/book/app/components/DgbHeader.tsx
+#   themes/book/app/components/DgbSiteFooter.tsx
+# Every book gets the Berlin-blue brand bar and the legal footer with no config;
+# a book that sets `site.parts.footer` gets that content in a band above the
+# legal bar rather than in place of it.
+#
+# Kept as a no-op so books that already `extends` this URL keep building — and
+# so they do not end up with two footers. Delete once nothing references it.
+version: 1

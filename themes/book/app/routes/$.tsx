@@ -11,7 +11,6 @@ import {
   useOutlineHeight,
   useSidebarHeight,
   PrimaryNavigation,
-  TopNav,
   getMetaTagsForArticle,
   ErrorDocumentNotFound,
   ErrorUnhandled,
@@ -31,7 +30,8 @@ import {
 import { ComputeOptionsProvider, ThebeLoaderAndServer } from '@myst-theme/jupyter';
 import { MadeWithMyst } from '@myst-theme/icons';
 import { ArticlePage } from '../components/ArticlePage.js';
-import { Footer } from '../components/Footer.js';
+import { DgbHeader } from '../components/DgbHeader.js';
+import { DgbSiteFooter } from '../components/DgbSiteFooter.js';
 import { Banner } from '../components/Banner.js';
 import { SidebarFooter } from '../components/SidebarFooter.js';
 import type { TemplateOptions } from '../types.js';
@@ -111,11 +111,10 @@ function ArticlePageAndNavigationInternal({
       <TabStateProvider>
         {projectParts?.banner && <Banner content={projectParts.banner.mdast} />}
       </TabStateProvider>
-      <TopNav
-        hideToc={hide_toc}
-        hideSearch={hideSearch}
-        navbarEnd={projectParts?.navbar_end?.mdast}
-      />
+      {/* The brand bar shows no `navbar_end` part: that slot is where a book would
+          put its own buttons, and they clashed with the DGB bar. The part still
+          renders in the sidebar drawer below. */}
+      <DgbHeader hideToc={hide_toc} hideSearch={hideSearch} />
       <PrimaryNavigation
         sidebarRef={toc}
         hide_toc={hide_toc}
@@ -135,7 +134,9 @@ function ArticlePageAndNavigationInternal({
       </TabStateProvider>
 
       <TabStateProvider>
-        {projectParts?.footer && <Footer content={projectParts.footer.mdast} />}
+        {/* Always rendered — the book's own `footer` part, when present, is
+            shown above the DGB legal bar rather than replacing it. */}
+        <DgbSiteFooter content={projectParts?.footer?.mdast} />
       </TabStateProvider>
     </>
   );

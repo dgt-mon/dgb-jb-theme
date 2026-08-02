@@ -30,13 +30,19 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun run build
       - run: bun run test
-      # Changesets action will set published=true if it does publish
-      - name: Create Release Pull Request or Publish to npm
+      # This DGB fork does not publish to the upstream @myst-theme npm scope or push
+      # to the upstream myst-templates/* repos, so the `publish` input is intentionally
+      # omitted here (unlike upstream jupyter-book/myst-theme). This still opens a
+      # "Version Packages" PR for changeset bookkeeping, but steps.changesets.outputs.published
+      # will never be 'true', which keeps every step/job below gated on it (npm publish,
+      # push to myst-templates, auto GitHub release, zip attachment) permanently inert.
+      # To publish this theme for books to consume, create a GitHub Release manually -
+      # see theme-assets.yml, which attaches book-theme.zip/article-theme.zip to it.
+      - name: Create Release Pull Request
         id: changesets
         uses: changesets/action@v1
         with:
           version: bun run version
-          publish: bun run publish:ci
           commit: 🚀 Release
           createGithubReleases: false
         env:

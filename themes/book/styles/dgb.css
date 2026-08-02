@@ -1,0 +1,872 @@
+/*
+ * DGB visual identity layer for the book theme — 1:1 migration.
+ *
+ * Faithful port of the De Gruyter Brill skin from the monograph-blueprint
+ * `styles/main.css`, applied on top of the STOCK book-theme layout (chapter nav
+ * left, "Contents" outline right — no structural overrides).
+ *
+ * WHAT IS PORTED (visual identity, layout-independent):
+ *   fonts · body/header/logo/mobile-toggle · heading colour · text recolour ·
+ *   paragraph type · footer prev/next links · "Contents" outline styling ·
+ *   admonitions · site footer · content links · search pill · interactive
+ *   embeds · landing components (Product Essentials, Quick Links + Metrics).
+ *
+ * DELIBERATELY NOT PORTED:
+ *   - Structural layout overrides (sidebar absolute-positioning, body-leftward,
+ *     frontmatter hero/alignment) — the native book-theme layout handles this,
+ *     per the "default navigation / fewer customizations" decision.
+ *   - Plugin-dependent features (breadcrumb, "In this chapter", search relocated
+ *     to the sidebar, chapter numbering) — these require _plugins/inject-subnav
+ *     or forked React components; handled as a separate step, not pure CSS.
+ *
+ * Fonts live in styles/fonts/ (only the weights actually used are bundled).
+ */
+
+/* ─── Brill (serif — body text) ─────────────────────────────────────────── */
+@font-face {
+  font-family: 'Brill';
+  src: url('../../styles/fonts/Brill-Roman.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Brill';
+  src: url('../../styles/fonts/Brill-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Brill';
+  src: url('../../styles/fonts/Brill-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Brill';
+  src: url('../../styles/fonts/Brill-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ─── Haffer (sans — headings, chrome, UI) ──────────────────────────────── */
+@font-face {
+  font-family: 'Haffer';
+  src: url('../../styles/fonts/Haffer-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Haffer';
+  src: url('../../styles/fonts/Haffer-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Haffer';
+  src: url('../../styles/fonts/Haffer-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --custom-style-loaded: 1;
+}
+
+body {
+  /* !important beats the theme's `bg-white` utility on <body> — otherwise the
+   * page background is white and shows as a gap above the footer. */
+  background-color: #fafaf5 !important;
+  text-underline-offset: 0.15em;
+  color: #002850;
+}
+
+main,
+article {
+  background-color: #fafaf5;
+}
+
+/* ─── DGB header — app/components/DgbHeader.tsx ─────────────────────────────
+ * The header is a component now, not a skin over the stock `<TopNav/>`: every
+ * book gets the Berlin-blue brand bar with no `myst.yml` config (no `logo`, no
+ * `logo_text`). Layout lives in the component (Tailwind); colour and type live
+ * here, with the rest of the identity.
+ *
+ * `!important` appears only where a rule has to beat the global "recolor dark
+ * theme text to Berlin blue" block further down — on the dark bar that block
+ * would otherwise render text blue-on-blue.
+ * ─────────────────────────────────────────────────────────────────────────── */
+.dgb-header {
+  background-color: #002850;
+  border-bottom: 0;
+  box-shadow: none;
+  font-family: Haffer, Arial, sans-serif;
+}
+
+/* The DGB lockup (public/dgb-logo.png) — periwinkle on the Berlin-blue bar. */
+.dgb-header-logo {
+  display: block;
+}
+
+.dgb-header-brand:focus-visible {
+  outline: 2px solid #b4b9ff;
+  outline-offset: 4px;
+}
+
+/* DGB-wide nav links: periwinkle, as on degruyterbrill.com. The book title next
+ * to the logo is sand instead, so the book reads as the page's own identity. */
+.dgb-header-nav-link {
+  color: #b4b9ff !important;
+  font-family: Haffer, Arial, sans-serif;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.dgb-header-nav-link:hover,
+.dgb-header-nav-link:focus-visible {
+  color: #ffffff !important;
+  text-decoration: underline;
+}
+
+/* Sidebar toggle — kept for nav access, recoloured for the dark bar. */
+.dgb-header-menu-button {
+  color: #fafaf5 !important;
+}
+
+.dgb-header-menu-button:hover,
+.dgb-header-menu-button:focus-visible {
+  color: #ffffff !important;
+}
+
+/* Keep the bar to a single 60px row: the sidebar and the document outline are
+ * offset by that height, so a nav item wrapping to a second line would push the
+ * bar taller and leave both misaligned. */
+.dgb-header .myst-top-nav-item,
+.dgb-header .myst-top-nav-dropdown,
+.dgb-header .myst-navbar-end {
+  white-space: nowrap;
+}
+
+/* The book's own nav links + dropdown triggers: same periwinkle as the DGB
+ * links they sit next to. Scoped to the header, so the dropdown popup (a white
+ * menu) keeps the theme's dark text. */
+.dgb-header .myst-top-nav-item a,
+.dgb-header .myst-top-nav-dropdown button,
+.dgb-header .myst-top-nav-dropdown button span {
+  color: #b4b9ff !important;
+  font-family: Haffer, Arial, sans-serif;
+}
+
+.dgb-header .myst-top-nav-item a:hover,
+.dgb-header .myst-top-nav-item a:focus-visible,
+.dgb-header .myst-top-nav-dropdown button:hover {
+  color: #ffffff !important;
+  text-decoration: underline;
+}
+
+/* Page actions (site.actions) — sand outline pill, inverted on hover. */
+.dgb-header-action {
+  border: 1px solid #fafaf5;
+  border-radius: 9999px;
+  color: #fafaf5 !important;
+  font-family: Haffer, Arial, sans-serif;
+}
+
+.dgb-header-action:hover,
+.dgb-header-action:focus-visible {
+  background-color: #fafaf5;
+  color: #002850 !important;
+}
+
+/* Headings — Berlin blue. !important overrides Tailwind prose's
+ * `.prose :where(h1…)` rule (zero-specificity :where, but the .prose ancestor
+ * still beats a bare `h1` selector). */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.myst-fm-block-title {
+  color: #002850 !important;
+}
+
+/* ─── Heading scale (Haffer) ───────────────────────────────────────────────
+ * The theme leaves h5/h6 with no explicit font-size, so against the 20px Brill
+ * body they render BELOW body text (UA defaults ~13px / ~11px) — a broken
+ * hierarchy. Define an explicit Haffer scale where every level is ≥ body and
+ * steps down cleanly. h1 (the frontmatter page title) keeps the theme's hero
+ * size; only its font-family/colour change for brand consistency.
+ * !important is required because the theme sizes headings via
+ * `.prose :where(hN)` (higher specificity, but non-!important).
+ * ─────────────────────────────────────────────────────────────────────────── */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: Haffer, Arial, sans-serif !important;
+}
+
+h2 {
+  font-size: 32px !important;
+  line-height: 1.2 !important;
+  font-weight: 600 !important;
+}
+h3 {
+  font-size: 27px !important;
+  line-height: 1.25 !important;
+  font-weight: 600 !important;
+}
+h4 {
+  font-size: 24px !important;
+  line-height: 1.3 !important;
+  font-weight: 600 !important;
+}
+h5 {
+  font-size: 22px !important;
+  line-height: 1.35 !important;
+  font-weight: 600 !important;
+}
+h6 {
+  font-size: 20px !important;
+  line-height: 1.4 !important;
+  font-weight: 600 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+span {
+  color: #002850;
+}
+
+/* ─── Recolor remaining black / dark-gray theme text to Berlin blue ─────────
+ * Body text is already #002850, but theme chrome (skip links, nav/theme
+ * buttons, "Made with MyST", search hints) and admonition headers still use
+ * Tailwind's black & dark-gray text utilities. Remap those to #002850.
+ * Blue link utilities (text-blue-*) and light muted grays (≤500) are left as-is.
+ * ─────────────────────────────────────────────────────────────────────────── */
+.text-black,
+.text-gray-600,
+.text-gray-700,
+.text-gray-800,
+.text-gray-900,
+.text-neutral-700,
+.text-neutral-800,
+.text-neutral-900,
+.text-stone-700,
+.text-stone-800,
+.text-stone-900,
+.text-slate-700,
+.text-slate-800,
+.text-slate-900,
+.text-zinc-700,
+.text-zinc-800,
+.text-zinc-900 {
+  color: #002850 !important;
+}
+
+/* ─── Paragraph body text — DGB design system ────────────────────────────── */
+p {
+  color: rgb(0, 40, 80);
+  font-family: Brill, serif;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 28px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-align: start;
+}
+
+/* ─── Footer prev/next page links ──────────────────────────────────────────
+ * Cobalt-subtle fill, no border, no shadow, 12px rounded corners.
+ * ─────────────────────────────────────────────────────────────────────────── */
+.myst-footer-links {
+  justify-content: space-between !important;
+  flex-wrap: nowrap !important; /* keep prev + next side by side, never stacked */
+  gap: 20px;
+}
+
+.myst-footer-link {
+  flex: 1 1 0 !important; /* share the row equally */
+  min-width: 0; /* allow shrinking so they stay on one row */
+  background-color: #e5f0ff;
+  border: 0 !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  color: #002850;
+}
+
+.myst-footer-link:hover,
+.myst-footer-link:focus-visible {
+  background-color: #d1e3ff;
+  color: #002850;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Inner row: space the prev/next arrow away from the label and vertically
+ * centre it against the two-line (group + title) text block. */
+.myst-footer-link > div {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* The arrow shouldn't shrink or crowd; the label keeps its own alignment. */
+.myst-footer-link .myst-footer-link-icon {
+  flex: none;
+}
+
+/* Title label: clear weight + line-height so it reads as the heading and sits
+ * comfortably under the small "group" subtitle. */
+.myst-footer-link .myst-footer-link-group {
+  margin-bottom: 4px;
+}
+
+/* ─── "Contents" outline (right margin) — DGB styling ──────────────────────
+ * Recolour/typeset the native outline; blend its box into the page background.
+ * (Structural repositioning from the custom layout is intentionally omitted.)
+ * ─────────────────────────────────────────────────────────────────────────── */
+.myst-outline {
+  color: #002850;
+  background-color: #fafaf5 !important;
+  font-family: Haffer, Arial, sans-serif;
+}
+
+.myst-outline-header {
+  margin-bottom: 12px !important;
+  color: #002850 !important;
+  font-family: Haffer, Arial, sans-serif;
+  font-size: 14px !important;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none !important;
+}
+
+.myst-outline-list {
+  margin: 0;
+  color: #002850 !important;
+  font-family: Haffer, Arial, sans-serif;
+  font-size: 14px !important;
+  line-height: 20px !important;
+}
+
+.myst-outline-item {
+  border-left-color: #e1dccd !important;
+}
+
+.myst-outline-item a {
+  display: block;
+  padding: 6px 8px 6px 12px;
+  color: #0059de !important;
+  text-decoration: none;
+}
+
+.myst-outline-item:hover,
+.myst-outline-item:focus-within,
+.myst-outline-item.myst-outline-item-active {
+  border-left-color: #0059de !important;
+}
+
+/* ─── Search bar — cobalt-subtle pill ─────────────────────────────────────── */
+.myst-search-bar {
+  min-width: 64px;
+  background-color: #d1e3ff !important;
+  border-color: transparent !important;
+  border-radius: 12px !important;
+  color: #002850 !important;
+  font-family: Haffer, Arial, sans-serif;
+  box-shadow: none !important;
+}
+
+.myst-search-bar:hover,
+.myst-search-bar:focus-visible {
+  background-color: #c4d9f7 !important;
+  border-color: transparent !important;
+  color: #002850 !important;
+  outline: 2px solid #002850;
+  outline-offset: 2px;
+}
+
+.myst-search-bar svg,
+.myst-search-bar .myst-search-text-placeholder,
+.myst-search-bar .myst-search-shortcut {
+  color: #002850 !important;
+}
+
+.myst-search-bar kbd {
+  background-color: rgba(255, 255, 255, 0.45);
+  border-color: rgba(0, 40, 80, 0.22) !important;
+  color: #002850 !important;
+  box-shadow: none !important;
+}
+
+/* Search bar in the header: Berlin-blue fill with a periwinkle outline and
+ * periwinkle text/icon, so it reads as part of the bar instead of a light pill
+ * punched into it. Overrides the cobalt-subtle rules above (hence !important). */
+.dgb-header .myst-search-bar {
+  background-color: #002850 !important;
+  border: 1px solid #b4b9ff !important;
+  border-radius: 9999px !important;
+  color: #b4b9ff !important;
+  box-shadow: none !important;
+}
+
+.dgb-header .myst-search-bar svg,
+.dgb-header .myst-search-bar .myst-search-text-placeholder {
+  color: #b4b9ff !important;
+}
+
+/* Hover/focus brightens to white — the cobalt-subtle rule's navy outline would
+ * be invisible on the navy bar. */
+.dgb-header .myst-search-bar:hover,
+.dgb-header .myst-search-bar:focus-visible {
+  background-color: #002850 !important;
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+  outline: none !important;
+}
+
+.dgb-header .myst-search-bar:hover svg,
+.dgb-header .myst-search-bar:hover .myst-search-text-placeholder,
+.dgb-header .myst-search-bar:focus-visible svg,
+.dgb-header .myst-search-bar:focus-visible .myst-search-text-placeholder {
+  color: #ffffff !important;
+}
+
+/* Hide the ⌘K keyboard-shortcut hint on the right of the search bar. */
+.myst-search-bar .myst-search-shortcut {
+  display: none !important;
+}
+
+/* ─── Product essentials block (landing) ───────────────────────────────────── */
+.dgb-product-essentials {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+  margin-top: 40px;
+  margin-bottom: 32px;
+}
+
+.dgb-product-cover {
+  display: block;
+  width: 220px;
+  height: auto;
+}
+
+.dgb-product-copy {
+  padding-top: 0;
+}
+
+.dgb-product-title {
+  margin: 0 0 20px;
+  color: #002850;
+  font-family: Haffer, Arial, sans-serif;
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 40px;
+}
+
+.dgb-product-meta {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  color: #002850;
+  font-family: Haffer, Arial, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  line-height: 20px;
+}
+
+.dgb-product-meta div {
+  display: flex;
+  gap: 4px;
+  margin: 0;
+}
+
+.dgb-meta-label {
+  font-weight: 600;
+}
+
+.dgb-meta-value {
+  font-weight: 400;
+}
+
+@media (max-width: 720px) {
+  .dgb-product-essentials {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .dgb-product-copy {
+    padding-top: 0;
+  }
+}
+
+/* On a landing page that uses the product-essentials block, hide the default
+ * frontmatter title/authors/date/badges/downloads (the block replaces them). */
+main article:has(> .dgb-product-essentials) .myst-fm-block-title,
+main article:has(> .dgb-product-essentials) .myst-fm-authors-affiliations,
+main article:has(> .dgb-product-essentials) .myst-fm-block-date-doi,
+main article:has(> .dgb-product-essentials) .myst-fm-block-badges,
+main article:has(> .dgb-product-essentials) .myst-fm-downloads-dropdown {
+  display: none !important;
+}
+
+/* ─── Quick Links + Metrics component (landing) ────────────────────────────── */
+.dgb-quickmetrics {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 32px;
+  margin-bottom: 32px;
+}
+
+.dgb-quicklinks,
+.dgb-metrics-box {
+  background-color: #d1e3ff;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.dgb-box-title {
+  padding: 12px 20px 0;
+  color: #002850;
+  font-family: Haffer, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+}
+
+.dgb-quicklinks-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 32px;
+  padding: 8px 20px 12px;
+  align-items: center;
+}
+
+.dgb-quicklink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #002850;
+  font-family: Haffer, Arial, sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 28px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.dgb-quicklink:hover {
+  text-decoration: underline;
+  color: #002850;
+}
+
+.dgb-quicklink svg {
+  flex-shrink: 0;
+}
+
+.dgb-metrics-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 8px;
+  padding: 8px 20px 16px;
+  align-items: flex-end;
+}
+
+.dgb-metrics-items {
+  display: flex;
+  flex: 1 0 0;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  min-width: 200px;
+}
+
+.dgb-metric-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+}
+
+.dgb-metric-icon {
+  flex-shrink: 0;
+}
+
+.dgb-metric-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+}
+
+.dgb-metric-value {
+  color: #002850;
+  font-family: Haffer, Arial, sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 24px;
+  white-space: nowrap;
+}
+
+.dgb-metric-label {
+  color: #002850;
+  font-family: Haffer, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+.dgb-metrics-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #002850;
+  font-family: Haffer, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  padding-left: 12px;
+  white-space: nowrap;
+  align-self: flex-end;
+}
+
+/* ─── Admonitions (important / tip / warning / …) ──────────────────────────
+ * Flat filled boxes: no shadow, no left accent rule, uniform fill colour,
+ * Berlin-blue title, kind-coloured icon. Colours per DGB design.
+ * ─────────────────────────────────────────────────────────────────────────── */
+.myst-admonition {
+  box-shadow: none !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+
+/* Header + body share one uniform background; remove the tinted header bar. */
+.myst-admonition .myst-admonition-header {
+  background-color: transparent !important;
+  padding: 20px 24px 4px !important;
+}
+
+.myst-admonition .myst-admonition-body {
+  padding: 4px 24px 20px !important;
+}
+
+/* Kind icon in the title — the box's base colour at full opacity. */
+.myst-admonition.myst-admonition-important .myst-admonition-header-icon,
+.myst-admonition.myst-admonition-note .myst-admonition-header-icon {
+  color: #d1e3ff !important;
+}
+
+.myst-admonition.myst-admonition-tip .myst-admonition-header-icon,
+.myst-admonition.myst-admonition-hint .myst-admonition-header-icon,
+.myst-admonition.myst-admonition-seealso .myst-admonition-header-icon {
+  color: #43b8b0 !important;
+}
+
+.myst-admonition.myst-admonition-warning .myst-admonition-header-icon,
+.myst-admonition.myst-admonition-caution .myst-admonition-header-icon,
+.myst-admonition.myst-admonition-attention .myst-admonition-header-icon,
+.myst-admonition.myst-admonition-danger .myst-admonition-header-icon {
+  color: #ffb900 !important;
+}
+
+/* Title: Berlin-blue, Haffer, bold. */
+.myst-admonition .myst-admonition-header-text {
+  color: #002850 !important;
+  font-family: Haffer, Arial, sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 28px;
+}
+
+/* Fill colours by kind. */
+.myst-admonition.myst-admonition-important,
+.myst-admonition.myst-admonition-note {
+  background-color: rgba(209, 227, 255, 0.5) !important; /* #D1E3FF 50% */
+}
+
+.myst-admonition.myst-admonition-tip,
+.myst-admonition.myst-admonition-hint,
+.myst-admonition.myst-admonition-seealso {
+  background-color: rgba(67, 184, 176, 0.15) !important; /* #43B8B0 15% */
+}
+
+.myst-admonition.myst-admonition-warning,
+.myst-admonition.myst-admonition-caution,
+.myst-admonition.myst-admonition-attention,
+.myst-admonition.myst-admonition-danger {
+  background-color: rgba(255, 185, 0, 0.15) !important; /* #FFB900 15% */
+}
+
+/* ─── DGB site footer — app/components/DgbSiteFooter.tsx ────────────────────
+ * Berlin-blue full-width bar: copyright + legal links, on every book with no
+ * `myst.yml` config. A book that defines `site.parts.footer` gets that content
+ * in the sand band above (`.dgb-book-footer`), where it stays readable, instead
+ * of it replacing the DGB bar.
+ * ─────────────────────────────────────────────────────────────────────────── */
+.dgb-footer {
+  width: 100%;
+}
+
+.dgb-book-footer {
+  background-color: #f5f4ef;
+  border-top: 1px solid #e1dccd;
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+.dgb-site-footer {
+  background-color: #002850;
+}
+
+.dgb-site-footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  max-width: 1440px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 24px 32px;
+  color: #b4b9ff;
+  font-family: Haffer, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.dgb-site-footer-inner span,
+.dgb-site-footer-inner p {
+  margin: 0;
+  color: #b4b9ff;
+  font-family: Haffer, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.dgb-site-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+}
+
+.dgb-site-footer-inner a {
+  color: #b4b9ff !important;
+  text-decoration: none;
+}
+
+.dgb-site-footer-inner a:hover,
+.dgb-site-footer-inner a:focus-visible {
+  color: #b4b9ff !important;
+  text-decoration: underline;
+}
+
+/* Footer link icons share the periwinkle (currentColor). */
+.dgb-site-footer-inner a svg {
+  color: #b4b9ff !important;
+}
+
+/* ─── Chapter navigation (TOC) items — DGB hover + separators ──────────────
+ * Sand-subtle (#F5F4EF) hover/active fill instead of the theme's light-blue
+ * (`bg-blue-300/30` active, `hover:bg-slate-300/30`); no rounded highlight
+ * (flush full-width), and a 1px #E1DCCD separator line between chapters.
+ * Overrides theme utilities `rounded-lg` and `my-1` on `.myst-toc-item`.
+ * ─────────────────────────────────────────────────────────────────────────── */
+.myst-toc-item {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  border-radius: 0 !important;
+  border-bottom: 1px solid #e1dccd;
+}
+
+.myst-toc-item:hover,
+.myst-toc-item.myst-toc-item-exact {
+  background-color: #f5f4ef !important; /* sand-subtle */
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* ─── Download button (frontmatter downloads dropdown) ─────────────────────
+ * Outlined navy pill → cobalt-blue fill + white text on hover, for a clear,
+ * readable selected state (replaces the theme's hard-to-read stone-700 hover).
+ * Icon uses currentColor, so it follows the text colour.
+ * ─────────────────────────────────────────────────────────────────────────── */
+.myst-fm-downloads-item {
+  margin: 4px !important;
+  padding: 8px 16px !important;
+  border: 1px solid #002850 !important;
+  border-radius: 9999px !important;
+  color: #002850 !important;
+}
+
+.myst-fm-downloads-item:hover,
+.myst-fm-downloads-item:focus-visible {
+  background-color: #0059de !important; /* cobalt */
+  color: #ffffff !important;
+  border-color: #0059de !important;
+}
+
+/* ─── Content links — cobalt (#0059DE) ────────────────────────────────────── */
+main article a.link {
+  color: #0059de !important;
+}
+
+/* ─── Interactive embeds (graphs) — cobalt-subtle frame ───────────────────── */
+main article div.leading-\[0\] {
+  background-color: #d1e3ff;
+  padding: 16px;
+  border-radius: 12px;
+}
+
+/* ─── Mobile: constrain content to the viewport (no horizontal scroll) ──────
+ * Long unbreakable tokens (URLs, filenames, docx cross-refs) and wide media
+ * can push the page a few px past the screen on small viewports. Break long
+ * words, cap media/table/pre/iframe width, and clip any residual horizontal
+ * overflow below the desktop breakpoint. `overflow-x: clip` (not hidden) is
+ * used because it does NOT create a scroll container — so it can't break the
+ * theme's sticky elements (which only engage at ≥1024px anyway).
+ * ─────────────────────────────────────────────────────────────────────────── */
+main article img,
+main article table,
+main article pre,
+main article iframe,
+main article .myst-iframe {
+  max-width: 100%;
+}
+
+main article {
+  overflow-wrap: break-word;
+}
+
+@media (max-width: 1023px) {
+  body {
+    overflow-x: clip;
+  }
+}
